@@ -4,6 +4,12 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
   "env": {
     "NEXT_PUBLIC_SOLANA_RPC_URL": "https://rpc.ankr.com/solana",
     "NEXT_PUBLIC_AIR_TOKEN_MINT": "7i5KKsX2weiTkry7jA4ZwSuXGhs5eJBEjY8vVxR4pfRx",
