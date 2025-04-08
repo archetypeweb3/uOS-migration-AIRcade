@@ -199,11 +199,11 @@ export default function Home() {
 
       // Insert data into Supabase
       const { data, error } = await supabase
-        .from('registered_wallets')
+        .from('registered_users')
         .insert([
           { 
-            solana_wallet: solanaWallet, 
-            evm_wallet: evmWallet 
+            solana_address: solanaWallet, 
+            evm_address: evmWallet 
           }
         ])
         .select();

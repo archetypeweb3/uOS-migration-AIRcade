@@ -1,11 +1,9 @@
-'use client';
-
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { AnimatedShinyText } from './AnimatedShinyText';
 
 export default function Navigation() {
-  const pathname = usePathname();
+  const router = useRouter();
   
   // Only register link is available
   const registerEnabled = true;
@@ -24,12 +22,12 @@ export default function Navigation() {
               <Link 
                 href="/" 
                 className={`px-4 py-2 rounded-lg transition font-mono text-xs md:text-sm ${
-                  pathname === '/' 
+                  router.pathname === '/' 
                     ? 'bg-gradient-to-r from-gray-800 to-gray-900 text-white' 
                     : 'text-gray-800 hover:bg-gray-100'
                 }`}
               >
-                <AnimatedShinyText className={pathname === '/' ? 'text-white' : 'text-current'}>
+                <AnimatedShinyText className={router.pathname === '/' ? 'text-white' : 'text-current'}>
                   Register
                 </AnimatedShinyText>
               </Link>

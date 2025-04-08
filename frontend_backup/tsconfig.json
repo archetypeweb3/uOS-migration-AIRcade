@@ -32,8 +32,7 @@
       "@uos-weth/scripts/*": [
         "../scripts/*"
       ]
-    },
-    "types": ["react", "react-dom"]
+    }
   },
   "include": [
     "next-env.d.ts",

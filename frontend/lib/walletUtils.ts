@@ -90,22 +90,7 @@ export const isProperEvmWalletAvailable = () => {
   const { ethereum } = window;
   if (!ethereum) return false;
   
-  // Enhanced check to ensure it's not Phantom's ethereum provider
-  if (isPhantomEVM(ethereum)) {
-    return false; // This is Phantom's ethereum provider, not a proper EVM wallet
-  }
-  
-  // Check for explicit support for known EVM wallets
-  if (ethereum.isMetaMask || ethereum.isCoinbaseWallet) {
-    return true;
-  }
-  
-  // Fall back to checking that it's definitely not Phantom
-  if ((window as any).phantom?.ethereum === ethereum) {
-    return false;
-  }
-  
-  // If we made it here, it's likely a proper EVM wallet
+  // If ethereum is available, consider it a proper wallet
   return true;
 };
 
@@ -201,28 +186,30 @@ export const connectPhantom = async (): Promise<string | null> => {
 export const connectProperEvmWallet = async (): Promise<string | null> => {
   if (!isBrowser) return null;
   
-  if (!isProperEvmWalletAvailable()) {
-    throw new Error('No proper EVM wallet detected. Please install MetaMask or another EVM wallet.');
-  }
-  
   try {
-    // Call our blockPhantomEVM function which now marks providers instead of deleting them
-    blockPhantomEVM();
-    
-    // Request accounts from the proper EVM wallet
-    const accounts = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
-    
-    // Even after connection, double check this isn't Phantom
-    if (isPhantomEVM((window as any).ethereum)) {
-      throw new Error('Phantom\'s EVM wallet is not supported. Please use MetaMask or another dedicated EVM wallet.');
+    // Get the ethereum provider
+    const ethereum = (window as any).ethereum;
+    if (!ethereum) {
+      throw new Error('No EVM wallet detected. Please install MetaMask or another EVM wallet.');
     }
     
+    // Request accounts
+    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+    
+    // If we got accounts, return the first one
     if (accounts && accounts.length > 0) {
       return accounts[0];
     }
+    
     return null;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error connecting to EVM wallet:', error);
-    throw error;
+    if (error.code === 4001) {
+      throw new Error('User rejected the connection request.');
+    }
+    if (error.code === -32002) {
+      throw new Error('Connection request already pending. Check your wallet extension.');
+    }
+    throw new Error('Failed to connect wallet. Please try again.');
   }
 }; 
